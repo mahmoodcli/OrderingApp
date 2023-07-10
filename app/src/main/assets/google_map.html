@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Adjust the size of the map container */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+
+<script>
+        var map;
+
+        // Initialize the map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.397, lng: 150.644},
+                zoom: 8
+            });
+
+            // Request geolocation access
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Pass the location data back to the Android code
+                    Android.onLocationReceived(position.coords.latitude, position.coords.longitude);
+                });
+            }
+        }
+    </script>
+
+<!-- Load the Google Maps JavaScript API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"
+        async defer></script>
+</body>
+</html>

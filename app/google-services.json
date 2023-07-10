@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "613992532509",
+    "project_id": "freeordernotification",
+    "storage_bucket": "freeordernotification.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613992532509:android:0d72163f2febc77d70d4f4",
+        "android_client_info": {
+          "package_name": "co.uk.freeorder.restaurant.orderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613992532509-i9d2tob5n2iuku9n2jrknkm1gpm9da21.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0pGaOG4F4OfS6a3ReAlB9Fwdm5dSeSv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613992532509-i9d2tob5n2iuku9n2jrknkm1gpm9da21.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613992532509:android:74aafb086510e64d70d4f4",
+        "android_client_info": {
+          "package_name": "com.example.orderApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613992532509-i9d2tob5n2iuku9n2jrknkm1gpm9da21.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0pGaOG4F4OfS6a3ReAlB9Fwdm5dSeSv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613992532509-i9d2tob5n2iuku9n2jrknkm1gpm9da21.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
