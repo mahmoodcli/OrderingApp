@@ -24,16 +24,50 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/pending"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_above="@+id/linear_main"
+        android:layout_below="@+id/img_pendings"
+        android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/linear_main"
-        android:layout_below="@+id/img_pendings"
+        android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp" />
+
+    <!--    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnClose"
+            android:visibility="gone"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/baseline_close_24"/>
+        <WebView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/btnClose"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/web_view"/>-->
+
+<!--
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show Location"
+                android:textSize="16dp"
+                android:id="@+id/showLoc"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:drawableRight="@drawable/baseline_arrow_drop_down_24"
+                android:textStyle="bold"/>-->
+    </RelativeLayout>
+
 
 
 
@@ -43,8 +77,8 @@
         android:layout_margin="10dp"
         app:cardCornerRadius="5dp"
         android:elevation="2dp"
-        android:visibility="gone"
         android:id="@+id/card_order"
+        android:visibility="gone"
         android:layout_above="@+id/linear_main"
         android:layout_below="@+id/tool_main">
         <ScrollView
@@ -67,7 +101,7 @@
                 android:layout_height="1dp"
                 android:background="@color/light_gray"
                 android:layout_marginTop="1dp"
-              />
+                />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -88,10 +122,10 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:textSize="11dp"
                     android:layout_marginStart="10dp"
                     android:gravity="end"
                     android:id="@+id/name"
-                    android:lines="1"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
@@ -121,13 +155,13 @@
                     android:textColor="@color/black" />
 
                 <TextView
-                    android:layout_width="150dp"
+                    android:layout_width="170dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
                     android:gravity="end"
                     android:id="@+id/email"
-                    android:focusableInTouchMode="true"
+                    android:textSize="11dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
@@ -161,6 +195,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
+                    android:textSize="11dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:id="@+id/phone"
@@ -194,6 +229,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:textSize="11dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
@@ -230,6 +266,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
+                    android:textSize="11dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:id="@+id/payment_method"
@@ -263,11 +300,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
+                    android:textSize="11dp"
                     android:layout_marginTop="10dp"
                     android:gravity="end"
                     android:layout_marginEnd="10dp"
                     android:id="@+id/description"
-                    android:focusableInTouchMode="true"
                     android:layout_marginBottom="10dp"
                     android:text="10$"
                     android:textColor="@color/black" />
@@ -300,6 +337,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
+                    android:textSize="11dp"
                     android:id="@+id/status"
                     android:layout_marginBottom="10dp"
                     android:text="10$"
@@ -333,10 +371,9 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:id="@+id/order_date"
+                    android:textSize="11dp"
                     android:gravity="end"
                     android:layout_marginEnd="10dp"
-                    android:focusableInTouchMode="true"
-                    android:lines="1"
                     android:layout_marginBottom="10dp"
                     android:text="10$"
                     android:textColor="@color/black" />
@@ -454,7 +491,18 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:id="@+id/relativeDetail"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"
+                    android:text="Item"
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -462,46 +510,58 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="bold"
                     android:layout_marginBottom="10dp"
-                    android:text="Menu Item Name"
+                    android:text="Qty"
                     android:textColor="@color/black" />
-     <TextView
-                    android:layout_width="150dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-         android:gravity="end"
-         android:id="@+id/menuItemNam"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="10$"
+                    android:textStyle="bold"
+                    android:layout_alignParentEnd="true"
+                    android:text="Price"
                     android:textColor="@color/black" />
-
             </RelativeLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/light_gray"
-                android:id="@+id/menu_v"
                 android:layout_marginTop="1dp"
                 />
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/pPrice"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
+                    android:id="@+id/menuItemNam"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Price"
+                    android:textSize="11dp"
+                    android:text="10$"
                     android:textColor="@color/black" />
-     <TextView
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/quantity"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="11dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="10$"
+                    android:textColor="@color/black" />
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -510,51 +570,18 @@
                     android:id="@+id/price"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
+                    android:textSize="11dp"
                     android:text="10$"
                     android:textColor="@color/black" />
-
             </RelativeLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/light_gray"
-                android:id="@+id/privev"
+                android:id="@+id/menu_v"
                 android:layout_marginTop="1dp"
                 />
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/qQuant"
-                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Quantity"
-                    android:textColor="@color/black" />
-     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/quantity"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="10$"
-                    android:textColor="@color/black" />
-
-            </RelativeLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/light_gray"
-                android:layout_marginTop="1dp"
-                />
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -568,6 +595,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:text="Total Price"
+                    android:textStyle="bold"
+                    android:textSize="18dp"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -579,6 +608,8 @@
                     android:id="@+id/totalPrice"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+                    android:textSize="18dp"
                     android:text="10$"
                     android:textColor="@color/black" />
 
@@ -588,7 +619,6 @@
                 android:layout_height="1dp"
                 android:background="@color/light_gray"
                 android:layout_marginTop="1dp"/>
-
         </LinearLayout>
         </ScrollView>
     </androidx.cardview.widget.CardView>

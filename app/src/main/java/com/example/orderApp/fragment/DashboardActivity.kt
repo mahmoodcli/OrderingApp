@@ -1,8 +1,12 @@
 package com.example.orderApp.fragment
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +14,9 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,6 +48,7 @@ class DashboardActivity : Fragment() {
         private var txtNoOrders: TextView? = null
         private var recyclerDashboard:RecyclerView?=null
         private var swipeRefreshLayout:SwipeRefreshLayout?=null
+        private val notificationPermissionRequestCode = 1
     }
 
     override fun onCreateView(
@@ -50,6 +58,7 @@ class DashboardActivity : Fragment() {
     ): View? {
         var v=inflater.inflate(R.layout.activity_dashboard,container,false)
         recyclerDashboard=v.findViewById(R.id.recycler_dashboard)
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         noOrders=v.findViewById(R.id.no_orders)
         txtNoOrders=v.findViewById(R.id.txt_no_orders)
         swipeRefreshLayout=v.findViewById(R.id.swipeMain)
@@ -71,10 +80,33 @@ class DashboardActivity : Fragment() {
         Log.d("jkkjst", userId.toString())
         Log.d("adeferf", jwt.toString())
         getOrders(userId!!, jwt!!)
-
+        val notificationManager = requireActivity().getSystemService(NotificationManager::class.java)
+        val isEnabled = notificationManager.areNotificationsEnabled()
+        if (isEnabled){
+//            Toast.makeText(requireContext(),"on",Toast.LENGTH_SHORT).show()
+        }else{
+//            Toast.makeText(requireContext(),"off",Toast.LENGTH_SHORT).show()
+//            askNotificationPermission()
+            if (Build.VERSION.SDK_INT > 32) {
+                if (!shouldShowRequestPermissionRationale("112")){
+                    getNotificationPermission();
+                }
+            }
+        }
         return v
     }
 
+    fun getNotificationPermission() {
+        try {
+            if (Build.VERSION.SDK_INT > 32) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(), arrayOf<String>(Manifest.permission.POST_NOTIFICATIONS),
+                    112
+                )
+            }
+        } catch (e: Exception) {
+        }
+    }
     private fun refreshData() {
         courseModelArrayList?.clear()
         getOrders(userId!!, jwt!!)
@@ -86,6 +118,7 @@ class DashboardActivity : Fragment() {
     }
 
         private fun buildRecyclerView() {
+            Collections.reverse(courseModelArrayList);
             adapter = DashboardAdapter(courseModelArrayList!!, requireActivity())
             val manager = LinearLayoutManager(requireActivity())
             recyclerDashboard?.setHasFixedSize(true)
@@ -122,6 +155,7 @@ class DashboardActivity : Fragment() {
             .get()
             .build()
 
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("OrderManager", "Failed to get orders. Error: ${e.message}")
@@ -143,6 +177,16 @@ class DashboardActivity : Fragment() {
                             val description = orderObj.getString("description")
                             val paymentMethod = orderObj.getString("paymentMethod")
                             val orderingMethod = orderObj.getString("orderingMethod")
+
+                            if (orders.length()>0){
+                                val lastOrderObj = orders.getJSONObject(orders.length() - 1)
+                                var lastOrderId = lastOrderObj.getInt("id")
+                                lastOrderId++
+                                var sharedPreferences=requireActivity().getSharedPreferences("myorder",0)
+                                sharedPreferences.edit().putString("orderId", lastOrderId.toString()).apply()
+                                var id=sharedPreferences.getString("orderId","")
+                                Log.d("asdfcyhbnfc",id.toString())
+                            }
 //                            var tokens = jsonObject.getString("token")
 //                            Log.e("OrderMasdnager", tokens)
                             // Extract customer details
@@ -151,6 +195,10 @@ class DashboardActivity : Fragment() {
                             val lastName = customerObj.getString("last_Name")
                             val phone = customerObj.getString("phone")
                             val email = customerObj.getString("email")
+                            val city = customerObj.getString("city")
+                            val postCode = customerObj.getString("postCode")
+                            var address1 = customerObj.getString("address1")
+
 
                             // extract order details
                             val orderDetailsArray = orderObj.getJSONArray("orderDetails")
@@ -167,6 +215,9 @@ class DashboardActivity : Fragment() {
                                     lastName,
                                     phone,
                                     email,
+                                    address1,
+                                    city,
+                                    postCode,
                                     items,
                                     orderDetailsArray.length()
                                 )
@@ -294,5 +345,15 @@ class DashboardActivity : Fragment() {
                 }
             }
         })
+    }
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+              ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS),101)
+            }
+        }
     }
 }

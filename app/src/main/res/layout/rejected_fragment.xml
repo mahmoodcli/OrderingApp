@@ -14,14 +14,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/txtNoDatare"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="no data found"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/recyclerReject"
-        app:layout_constraintTop_toTopOf="@+id/recyclerReject" />
+<!--    <TextView-->
+<!--        android:id="@+id/txtNoDatare"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="no data found"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/recyclerReject"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/recyclerReject" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

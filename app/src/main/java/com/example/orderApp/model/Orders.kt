@@ -13,6 +13,9 @@ data class Orders(
     val lastName: String,
     val phone: String,
     val email: String,
+    val address1: String,
+    val city: String,
+    val postcode: String,
     val items: List<OrderItem>,
     val orderLength:Int
     )
@@ -25,7 +28,20 @@ data class OrderItem(
     val quantity: ArrayList<String>,
     val totalPrice: ArrayList<String>
 )
-
+data class Orderss(
+    val id: String,
+    val orderDate: String,
+    val status: String,
+    val description: String,
+    val paymentMethod: String,
+    val orderingMethod: String,
+    val firstName: String,
+    val lastName: String,
+    val phone: String,
+    val email: String,
+    val items: List<OrderShow>,
+    val orderLength:Int
+)
 data class OrderShow(
     val menuItemId:String,
     val menuItemName:String,

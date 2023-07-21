@@ -9,6 +9,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -138,10 +140,12 @@ class AcceptOrderActivity : AppCompatActivity() {
             }
 
             override fun onError(error: String) {
+                pd?.dismiss()
                 Toast.makeText(this@AcceptOrderActivity, error, Toast.LENGTH_SHORT).show()
             }
 
             override fun onMessage(message: String) {
+                pd?.dismiss()
                 Toast.makeText(this@AcceptOrderActivity, "Message: $message", Toast.LENGTH_SHORT).show()
             }
 
@@ -156,15 +160,26 @@ class AcceptOrderActivity : AppCompatActivity() {
         val printables = getSomePrintables()
         printing?.print(printables)
     }
+    private fun centerImageHorizontally(bitmap: Bitmap, receiptWidth: Int): Bitmap {
+        val imageWidth = bitmap.width
+        val padding = (receiptWidth - imageWidth) / 2
+        val centeredBitmap = Bitmap.createBitmap(receiptWidth, bitmap.height, bitmap.config)
+        val canvas = Canvas(centeredBitmap)
+        canvas.drawColor(Color.WHITE) // Set the background color of the receipt
+        canvas.drawBitmap(bitmap, padding.toFloat(), 0f, null)
+        return centeredBitmap
+    }
 
     private fun printSomeImages(bitmap: Bitmap) {
+        val receiptWidthInPixels = (80f * 203 / 25.4f).toInt() // Calculate the receipt width in pixels based on 80mm width and 203 DPI
+        val centeredBitmap = centerImageHorizontally(bitmap, receiptWidthInPixels)
         val printables = ArrayList<Printable>().apply {
-            add(ImagePrintable.Builder(bitmap).build())
-//            add(ImagePrintable.Builder(R.drawable.image2, resources).build())
-//            add(ImagePrintable.Builder(R.drawable.image3, resources).build())
+            add(ImagePrintable.Builder(centeredBitmap).build())
         }
         printing?.print(printables)
     }
+
+
 
     private fun getSomePrintables() = ArrayList<Printable>().apply {
         add(RawPrintable.Builder(byteArrayOf(27, 100, 4)).build()) // feed lines example in raw mode
@@ -206,7 +221,7 @@ class AcceptOrderActivity : AppCompatActivity() {
             .setUnderlined(DefaultPrinter.UNDERLINED_MODE_ON)
             .setCharacterCode(DefaultPrinter.CHARCODE_ARABIC_FARISI)
             .setNewLinesAfter(1)
-            .setCustomConverter(ArabicConverter()) // change only the converter for this one
+            .setCustomConverter(ArabicConverter()) // change only the converter for this one.
             .build())
     }
 

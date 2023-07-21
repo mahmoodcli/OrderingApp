@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
+        <item>@font/alfa_slab_one</item>
+        <item>@font/arbutus</item>
+        <item>@font/average</item>
+        <item>@font/bangers</item>
+        <item>@font/bungee</item>
         <item>@font/poppins_light</item>
         <item>@font/poppins_medium</item>
     </array>

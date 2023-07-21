@@ -43,10 +43,24 @@ class DashboardAdapter(courseModelArrayList: ArrayList<Orders>,var context: Cont
         // setting data to our views of recycler view.
         val model = courseModelArrayList[position]
         val item=model.items[position%model.items.size]
-
+        val dated= listOf('T','.')
+        val delimiter = '.'
+        var resultString = model.orderDate?.substringBefore(delimiter)
+        for (char in dated) {
+            resultString=resultString?.replace(char.toString(), ", ")
+        }
+        holder.courseDescTV.text="$resultString"
             holder.courseNameTV.setText("Order "+model.id)
-            holder.courseDescTV.setText(model.orderDate)
             holder.txtQuantity.setText(model.orderLength.toString())
+            holder.name.setText(model.firstName+" "+model.lastName)
+        holder.name.visibility=View.VISIBLE
+
+        if (model.orderingMethod=="delivery"){
+            holder.postcode.setText(model.postcode)
+            holder.postcode.visibility=View.VISIBLE
+        }else{
+            holder.postcode.visibility=View.GONE
+        }
 
         val priceClean = item.totalPrice.toString().removeSurrounding("[", "]")
         val convert = priceClean.split(", ")
@@ -81,6 +95,9 @@ class DashboardAdapter(courseModelArrayList: ArrayList<Orders>,var context: Cont
             intent.putExtra("phone",model.phone)
             intent.putExtra("status",model.status)
             intent.putExtra("date",model.orderDate)
+            intent.putExtra("address",model.address1)
+            intent.putExtra("city",model.city)
+            intent.putExtra("postcode",model.postcode)
 
             intent.putExtra("orderIds",model.id)
             intent.putExtra("menuItemId",item.menuItemId)
@@ -108,6 +125,8 @@ class DashboardAdapter(courseModelArrayList: ArrayList<Orders>,var context: Cont
         lateinit var txtQuantity: TextView
         lateinit var card_item: CardView
         lateinit var btnDelete: ImageView
+        lateinit var name: TextView
+        lateinit var postcode: TextView
 
         init {
             // initializing our views with their ids.
@@ -117,6 +136,8 @@ class DashboardAdapter(courseModelArrayList: ArrayList<Orders>,var context: Cont
             btnDelete = itemView.findViewById(R.id.btnDelete)
             txtPrice = itemView.findViewById(R.id.txtPrice)
             txtQuantity = itemView.findViewById(R.id.txtQuantity)
+            name = itemView.findViewById(R.id.name)
+            postcode = itemView.findViewById(R.id.postcode)
         }
     }
 

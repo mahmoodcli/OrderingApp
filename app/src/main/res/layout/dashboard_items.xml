@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:id="@+id/card_item"
     android:elevation="8dp"
@@ -19,17 +19,17 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content">
         <androidx.cardview.widget.CardView
-            android:layout_width="35dp"
+            android:layout_width="30dp"
             android:layout_gravity="center"
             app:cardCornerRadius="5dp"
             android:id="@+id/card_2"
             android:layout_margin="5dp"
             app:cardBackgroundColor="#F8FFE2"
-            android:layout_height="35dp">
+            android:layout_height="30dp">
 
             <TextView
                 android:id="@+id/txtQuantity"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5dp"
                 android:gravity="center"
@@ -37,17 +37,12 @@
                 android:text="22"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/baseline_arrow_drop_down_24"
-                android:layout_gravity="end"/>
         </androidx.cardview.widget.CardView>
 
        <ImageView
            android:layout_width="60dp"
            android:layout_height="60dp"
-           android:layout_margin="5dp"
+           android:layout_margin="3dp"
            android:src="@drawable/order_icon"
            android:layout_gravity="center"/>
         <LinearLayout
@@ -60,26 +55,55 @@
                 android:id="@+id/idTVCourseName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:padding="1dp"
                 android:text="Course Name"
                 android:textColor="#F10E0E"
                 android:textSize="16sp" />
-
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:layout_below="@id/idTVCourseName"
+                android:padding="1dp"
+                android:textSize="11dp"
+                android:visibility="gone"
+                android:text="Course Description"
+                android:textColor="@color/black"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
         <!-- text view for our course description -->
             <TextView
             android:id="@+id/idTVCourseDescription"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:lines="1"
             android:layout_below="@id/idTVCourseName"
-            android:padding="5dp"
-            android:textSize="12dp"
+            android:padding="1dp"
+            android:textSize="11dp"
             android:text="Course Description"
             android:textColor="@color/black"
             android:singleLine="true"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"/>
+            <TextView
+                android:id="@+id/postcode"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:layout_below="@id/idTVCourseName"
+                android:padding="1dp"
+                android:textSize="11dp"
+                android:text="Course Description"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -90,14 +114,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_margin="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:text="Course Description"
             android:textColor="@color/black"
-            android:textSize="14dp" />
+            android:textSize="12dp" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

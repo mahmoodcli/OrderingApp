@@ -16,6 +16,8 @@ import com.example.orderApp.adapter.ViewPagerAdapter
 import com.example.orderApp.databinding.ActivityOrderStatusBinding
 import com.example.orderApp.fragment.AcceptedFragment
 import com.example.orderApp.fragment.DashboardActivity
+import com.example.orderApp.fragment.DashboardActivity.Companion.adapter
+import com.example.orderApp.fragment.DashboardActivity.Companion.courseModelArrayList
 import com.example.orderApp.model.Orders
 import com.example.orderApp.services.NotificationReceiver
 import java.util.*
@@ -87,7 +89,7 @@ class OrderStatusActivity : AppCompatActivity() {
         val filteredlist = java.util.ArrayList<Orders>()
 
         // running a for loop to compare elements.
-        for (item in DashboardActivity.courseModelArrayList!!) {
+        for (item in courseModelArrayList!!) {
             // checking if the entered string matched with any item of our recycler view.
             if (item.firstName.toLowerCase().contains(text.lowercase(Locale.getDefault()))) {
                 // if the item is matched we are
@@ -102,7 +104,7 @@ class OrderStatusActivity : AppCompatActivity() {
         } else {
             // at last we are passing that filtered
             // list to our adapter class.
-            DashboardActivity.adapter?.filterList(filteredlist)
+            adapter?.filterList(filteredlist)
         }
     }
 

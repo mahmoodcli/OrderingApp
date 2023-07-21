@@ -15,63 +15,132 @@
         android:id="@+id/tool_main"
         app:navigationIcon="@drawable/back"
         app:titleTextColor="@color/white"/>
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_above="@+id/accept_confirm"
+        android:layout_below="@+id/tool_main"
+        android:layout_height="wrap_content">
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             app:cardCornerRadius="5dp"
             android:elevation="2dp"
-            android:layout_above="@+id/accept_confirm"
             android:id="@+id/card_order"
-            android:layout_below="@+id/tool_main">
-            <ScrollView
-                android:layout_width="wrap_content"
-                android:id="@+id/scrollView"
-                android:layout_height="wrap_content">
+          >
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/restaurantName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/bungee"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Umar Resstaurant"
+                    android:textColor="@color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:layout_marginTop="1dp"
-                  />
-
-                <RelativeLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/average"
+                    android:id="@+id/address"
+                    android:gravity="center"
+                    android:text="address"
+                    android:textColor="@color/black" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Full Name"
-                        android:textColor="@color/black" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/average"
+                    android:id="@+id/city"
+                    android:gravity="center"
+                    android:text="city"
+                    android:textColor="@color/black" />
 
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="10dp"
-                        android:gravity="end"
-                        android:id="@+id/name"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="pasta"
-                        android:textColor="@color/black" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:textSize="11dp"
+                    android:gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/average"
+                    android:layout_marginBottom="15dp"
+                    android:id="@+id/phone"
+                    android:text="phone"
+                    android:textColor="@color/black" />
 
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/orderNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/average"
+                    android:gravity="center"
+                    android:text="Order: 454"
+                    android:textColor="@color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/order_date"
+                    android:fontFamily="@font/average"
+                    android:textSize="11dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="10$"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="11dp"
+                    android:layout_marginStart="10dp"
+                    android:fontFamily="@font/average"
+                    android:id="@+id/name"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="pasta"
+                    android:textColor="@color/black" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/email"
+                    android:fontFamily="@font/average"
+                    android:textSize="11dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="single pasta"
+                    android:textColor="@color/black" />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -81,7 +150,18 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:id="@+id/relativeDetail"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp"
+                        android:text="Item"
+                        android:textColor="@color/black" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -89,21 +169,21 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:textStyle="bold"
                         android:layout_marginBottom="10dp"
-                        android:text="Email"
+                        android:text="Qty"
                         android:textColor="@color/black" />
-
                     <TextView
-                        android:layout_width="100dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
                         android:layout_marginStart="10dp"
-                        android:gravity="end"
-                        android:id="@+id/email"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
-                        android:text="single pasta"
+                        android:textStyle="bold"
+                        android:layout_alignParentEnd="true"
+                        android:text="Price"
                         android:textColor="@color/black" />
                 </RelativeLayout>
                 <View
@@ -114,38 +194,53 @@
                     />
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
+                        android:id="@+id/menuItemNam"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
-                        android:text="Phone"
+                        android:textSize="11dp"
+                        android:text="10$"
                         android:textColor="@color/black" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/quantity"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="11dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="10$"
+                        android:textColor="@color/black" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
+                        android:id="@+id/price"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
-                        android:id="@+id/phone"
+                        android:textSize="11dp"
                         android:text="10$"
                         android:textColor="@color/black" />
                 </RelativeLayout>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:id="@+id/phone_v"
                     android:background="@color/light_gray"
+                    android:id="@+id/menu_v"
                     android:layout_marginTop="1dp"
                     />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -157,15 +252,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
+                        android:textSize="11dp"
                         android:layout_marginEnd="10dp"
+                        android:fontFamily="@font/average"
                         android:layout_marginBottom="10dp"
-                        android:text="Ordering Method"
+                        android:text="Ordering Mode"
                         android:textColor="@color/black" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
+                        android:textSize="11dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
@@ -174,13 +272,7 @@
                         android:text="10$"
                         android:textColor="@color/black" />
                 </RelativeLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:id="@+id/order_v"
-                    android:layout_marginTop="1dp"
-                    />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -192,9 +284,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/average"
                         android:layout_marginEnd="10dp"
+                        android:textSize="11dp"
                         android:layout_marginBottom="10dp"
-                        android:text="Payment Method"
+                        android:text="Payment Mode"
                         android:textColor="@color/black" />
 
                     <TextView
@@ -202,6 +296,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="10dp"
+                        android:textSize="11dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:id="@+id/payment_method"
@@ -209,12 +304,7 @@
                         android:text="10$"
                         android:textColor="@color/black" />
                 </RelativeLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:layout_marginTop="1dp"
-                    />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -225,16 +315,19 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/average"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
+                        android:textSize="11dp"
                         android:text="Description"
                         android:textColor="@color/black" />
 
                     <TextView
-                        android:layout_width="100dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="10dp"
+                        android:textSize="11dp"
                         android:layout_marginTop="10dp"
                         android:gravity="end"
                         android:layout_marginEnd="10dp"
@@ -243,12 +336,7 @@
                         android:text="10$"
                         android:textColor="@color/black" />
                 </RelativeLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:layout_marginTop="1dp"
-                    />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -260,7 +348,9 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
+                        android:fontFamily="@font/average"
                         android:layout_marginBottom="10dp"
+                        android:textSize="11dp"
                         android:text="Status"
                         android:textColor="@color/black" />
 
@@ -271,46 +361,13 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
+                        android:textSize="11dp"
                         android:id="@+id/status"
                         android:layout_marginBottom="10dp"
                         android:text="10$"
                         android:textColor="@color/black" />
                 </RelativeLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:layout_marginTop="1dp"
-                    />
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Order Date"
-                        android:textColor="@color/black" />
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:id="@+id/order_date"
-                        android:gravity="end"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="10$"
-                        android:textColor="@color/black" />
-
-                </RelativeLayout>
     <!--            <View-->
     <!--                android:layout_width="match_parent"-->
     <!--                android:layout_height="1dp"-->
@@ -418,112 +475,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_gray"
-                    android:layout_marginTop="1dp"
-                    />
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Menu Item Name"
-                        android:textColor="@color/black" />
-         <TextView
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-             android:gravity="end"
-             android:id="@+id/menuItemNam"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="10$"
-                        android:textColor="@color/black" />
-
-                </RelativeLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:id="@+id/menu_v"
-                    android:layout_marginTop="1dp"
-                    />
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/pPrice"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Price"
-                        android:textColor="@color/black" />
-         <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:id="@+id/price"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="10$"
-                        android:textColor="@color/black" />
-
-                </RelativeLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:id="@+id/privev"
-                    android:layout_marginTop="1dp"
-                    />
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/qQuant"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Quantity"
-                        android:textColor="@color/black" />
-         <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:id="@+id/quantity"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="10$"
-                        android:textColor="@color/black" />
-
-                </RelativeLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_gray"
-                    android:layout_marginTop="1dp"
-                    />
+                    android:layout_marginTop="1dp"/>
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -537,6 +489,9 @@
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
                         android:text="Total Price"
+                        android:fontFamily="@font/average"
+                        android:textStyle="bold"
+                        android:textSize="18dp"
                         android:textColor="@color/black" />
 
                     <TextView
@@ -548,6 +503,8 @@
                         android:id="@+id/totalPrice"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
+                        android:textStyle="bold"
+                        android:textSize="18dp"
                         android:text="10$"
                         android:textColor="@color/black" />
 
@@ -557,10 +514,23 @@
                     android:layout_height="1dp"
                     android:background="@color/light_gray"
                     android:layout_marginTop="1dp"/>
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:fontFamily="@font/average"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:id="@+id/thanks"
+                    android:text="Customer Copy\nThanks for visiting"
+                    android:textColor="@color/black" />
             </LinearLayout>
-            </ScrollView>
         </androidx.cardview.widget.CardView>
+    </ScrollView>
+
     <ImageView
         android:id="@+id/accept_confirm"
         android:layout_width="wrap_content"

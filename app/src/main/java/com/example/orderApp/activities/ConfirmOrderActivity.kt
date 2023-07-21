@@ -1,5 +1,6 @@
 package com.example.orderApp.activities
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,20 +15,28 @@ import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.orderApp.databinding.ActivityConfirmOrderBinding
-import com.example.orderApp.db.DbHistory
+import com.example.orderApp.fragment.DashboardActivity
 import com.example.orderApp.model.DbModel
+import com.example.orderApp.model.OrderShow
 import okhttp3.*
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONStringer
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 class ConfirmOrderActivity : AppCompatActivity() {
     lateinit var binding:ActivityConfirmOrderBinding
+    var pd: ProgressDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityConfirmOrderBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-
+        var sharedPreferences =getSharedPreferences("MyPrefs", 0)
+        val userId = sharedPreferences!!.getString("userId", "")
+        val jwt = sharedPreferences!!.getString("token", "")
+        companyDetail(userId!!, jwt!!)
         binding.toolMain.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
             finish()
@@ -49,9 +58,12 @@ class ConfirmOrderActivity : AppCompatActivity() {
         var price=intent.getStringExtra("price")
         var quantity=intent.getStringExtra("quantity")
         var totalPrice=intent.getStringExtra("totalPrice")
+        Log.d("orderName", firstName.toString())
+        binding.orderNumber.text="Order: $id"
 
-        binding.name.text="$firstName $lastName"
-        binding.email.text= email
+
+        binding.name.text="Name: $firstName $lastName"
+        binding.email.text= "Email: $email"
         if (description.isNullOrEmpty()){
             binding.description.text="description is empty"
         }else{
@@ -66,43 +78,57 @@ class ConfirmOrderActivity : AppCompatActivity() {
         binding.paymentMethod.text=paymentMethod
         binding.phone.text=phone
         binding.status.text=status
-        binding.orderDate.text=date
+        val dated= listOf('T','.')
+        val delimiter = '.'
+        var resultString = date?.substringBefore(delimiter)
+        for (char in dated) {
+        resultString=resultString?.replace(char.toString(), ", ")
+        }
+        binding.orderDate.text="Dated : $resultString"
 
 //        binding.orderIds.text= orderIds.toString()
 //        binding.menuItemId.text= menuItemId.toString()
-        binding.menuItemNam.text=menuItemNam
-        binding.price.text= price.toString()
-        binding.quantity.text= quantity.toString()
-        binding.totalPrice.text= totalPrice.toString()
+        var input = menuItemNam
+        val cleanString = input?.removeSurrounding("[", "]")
+        val items = cleanString?.split(", ")
+
+        var quant = quantity?.removeSurrounding("[", "]")
+        val itemQuant = quant?.split(", ")
+
+        var pric = price?.removeSurrounding("[", "]")
+        val itemPrice = pric?.split(", ")
+
+        if (items != null && itemQuant != null && itemPrice != null) {
+            // Join the menuItemNam values with newline separator
+            val menuItemText = items.joinToString("\n")
+            val quantityText = itemQuant.joinToString("\n")
+            val priceText = itemPrice.joinToString("\n")
+
+            // Set the text of your TextViews
+            binding.menuItemNam.text = menuItemText
+            binding.quantity.text = quantityText
+            binding.price.text = priceText
+        }
+
+        binding.totalPrice.text= "£ $totalPrice"
+
 
         binding.acceptConfirm.setOnClickListener {
             var firstName=intent.getStringExtra("firstName")
             var lastName=intent.getStringExtra("lastName")
-
-            var dbModel=DbModel()
-            dbModel.title="Order $id"
-            dbModel.desc= date.toString()
-            dbModel.email=email.toString()
-            dbModel.phone=phone.toString()
-            dbModel.status="accepted"
-            dbModel.item=menuItemNam.toString()
-            dbModel.price=totalPrice.toString()
-            Log.d("dsdsds", title.toString())
-            var dbHistory=DbHistory(this)
-            dbHistory.saveData(dbModel)
 
             var sharedPreferences=getSharedPreferences("myOrders",Context.MODE_PRIVATE)
             sharedPreferences.edit().putString("orders","$firstName $lastName").apply()
 
             val map = convertScrollViewToBitmap(binding.scrollView)
             val stream = ByteArrayOutputStream()
-            map?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            map?.compress(Bitmap.CompressFormat.JPEG, 80, stream)
             val byteArray: ByteArray = stream.toByteArray()
             val in1 = Intent(this, AcceptOrderActivity::class.java)
             in1.putExtra("image", byteArray)
             startActivity(in1)
             Log.v("BitmapObject", map.toString())
-            var orderIds=intent.getStringExtra("orderIds")
+            var orderIds=intent.getStringExtra("id")
             val orderId =orderIds
             acceptOrder(orderId.toString())
             finish()
@@ -139,5 +165,49 @@ class ConfirmOrderActivity : AppCompatActivity() {
             var jwt=sharedPreferences.getString("token","")
             MainActivity.updateOrderStatus(orderId, userid!!, "accepted", jwt!!)
             Log.d("addtdc", MainActivity.stats.toString())
+    }
+    fun companyDetail(userId:String,jwt:String){
+        pd = ProgressDialog(this)
+        pd!!.setMessage("Loading!...")
+        pd?.setCanceledOnTouchOutside(false)
+        pd!!.show()
+        val url="https://api.freeorder.co.uk/api/Company/getcompanybyuserid/$userId"
+        val client=OkHttpClient()
+        val request=Request.Builder().url(url).header("Authorization","Bearer $jwt").get().build()
+
+        client.newCall(request).enqueue(object :Callback{
+            override fun onFailure(call: Call, e: IOException) {
+                Toast.makeText(this@ConfirmOrderActivity,"failed to load",Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string()
+                if (response.isSuccessful && responseData != null) {
+                    val detail = JSONObject(responseData)
+                    pd?.dismiss()
+                    val id = detail.optInt("id")
+                    val email = detail.optString("email", "")
+                    val address1 = detail.optString("address1", "")
+                    val address2 = detail.optString("address2", "")
+                    val city = detail.optString("city", "")
+                    val postCode = detail.optString("postCode", "")
+                    val country = detail.optString("country", "")
+                    val isActive = detail.optBoolean("isActive")
+                    val isDeleted = detail.optBoolean("isDeleted")
+                    val restaurantName = detail.optString("restaurantName", "")
+                    val restaurantPhoneNumber = detail.optString("restaurantPhoneNumber", "")
+                    val allow = detail.optBoolean("allow")
+                    val url = detail.optString("url", "")
+                    val firstName = detail.optString("firstName", "")
+                    val lastName = detail.optString("lastName", "")
+                    runOnUiThread {
+                        binding.restaurantName.text=restaurantName
+                        binding.address.text=address1
+                        binding.city.text=city
+                    }
+
+                }
+            }
+        })
     }
 }

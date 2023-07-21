@@ -4,16 +4,28 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.example.orderApp.R
 import com.example.orderApp.activities.MainActivity
+import com.example.orderApp.fragment.DashboardActivity
+import com.example.orderApp.model.OrderItem
+import com.example.orderApp.model.Orders
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import okhttp3.*
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.IOException
+
 
 class FirebaseMessageReceiver : FirebaseMessagingService() {
 
@@ -25,7 +37,6 @@ class FirebaseMessageReceiver : FirebaseMessagingService() {
 
     private var mediaPlayer: MediaPlayer? = null
 
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
     }
@@ -33,6 +44,10 @@ class FirebaseMessageReceiver : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (remoteMessage.notification != null) {
             showNotification(remoteMessage.notification!!.title.toString(), remoteMessage.notification!!.body.toString())
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("notification","this is notification")
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
     }
 
@@ -97,4 +112,5 @@ class FirebaseMessageReceiver : FirebaseMessagingService() {
         val beepIntent = Intent(this, BeepForegroundService::class.java)
         ContextCompat.startForegroundService(this, beepIntent)
     }
+
 }

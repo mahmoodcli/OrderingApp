@@ -43,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 // Get new FCM registration token
                 val token = task.result
+                Log.d("deleted", token)
                 val editor = sharedPreferences.edit()
                 editor.putString("fcmToken",token)
                 editor.putString("jwtToken",token)

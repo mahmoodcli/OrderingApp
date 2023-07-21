@@ -1,39 +1,73 @@
 package com.example.orderApp.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.webkit.*
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.orderApp.R
 import com.example.orderApp.adapter.MainAdapter
+import com.example.orderApp.adapter.MainAdapterTwo
 import com.example.orderApp.databinding.ActivityMainBinding
-import com.example.orderApp.db.RejectedDb
-import com.example.orderApp.model.DbModel
-import com.example.orderApp.model.OrderItem
-import com.example.orderApp.model.OrderShow
+import com.example.orderApp.model.*
 import com.example.orderApp.services.BeepForegroundService
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.json.JSONArray
+import org.json.JSONException
 import java.io.IOException
 import java.io.OutputStream
+import java.net.URLEncoder
+
 
 class MainActivity : AppCompatActivity() {
     var status:String?=null
     var arrayList:ArrayList<OrderShow>?=null
     var adapter:MainAdapter?=null
+    private var courseModelArrayList: ArrayList<Orderss>? = null
+    var sharedPreferences:SharedPreferences?=null
+    var editor:Editor?=null
+    var handler:Handler?=null
+    var runnable:Runnable?=null
     @SuppressLint("StringFormatInvalid", "SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        sharedPreferences=getSharedPreferences("myAllData",0)
+        var firstNamse = sharedPreferences?.getString("firstName", "")
+        Log.d("orderName", firstNamse.toString())
+        editor=sharedPreferences?.edit()
+        handler= Handler()
+        runnable= Runnable {
+            Log.d("addtdc", stats.toString())
+            var orderIds = intent.getStringExtra("orderIds")
+            val orderId = orderIds
+            rejectOrder(orderId.toString())
+            onBackPressed()
+            stopService(Intent(this@MainActivity,BeepForegroundService::class.java))
+        }
+        handler?.postDelayed(runnable!!,3 * 60 * 1000)
+
         setContentView(binding.root)
         arrayList= ArrayList()
+        courseModelArrayList=ArrayList()
+        acceptButton = findViewById(R.id.btnAccept)
+        rejectButton = findViewById(R.id.btnReject)
+
         var firstName = intent.getStringExtra("firstName")
         var lastName = intent.getStringExtra("lastName")
         var email = intent.getStringExtra("email")
@@ -53,8 +87,46 @@ class MainActivity : AppCompatActivity() {
         var name = intent.getStringExtra("name")
         var total = intent.getStringExtra("total")
         var totalPrices = intent.getStringExtra("totalPrices")
-        binding.totalPrices.text="£."+"$totalPrices"
+        var address = intent.getStringExtra("address")
+        var city = intent.getStringExtra("city")
+        var postcode = intent.getStringExtra("postcode")
+        binding.totalPrices.text="£"+"$totalPrices"
         Log.d("orderName",price.toString())
+
+ /*       binding.showLoc.visibility=View.GONE
+
+        if (address.equals("null") && city.equals("null") && postcode.equals("null")) else{
+            binding.showLoc.visibility=View.VISIBLE
+            binding.showLoc.setOnClickListener {
+                if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),121)
+                }
+                val query = "$address, $postcode $city"
+                val encodedQuery = URLEncoder.encode(query, "UTF-8")
+                binding.webView.settings.javaScriptEnabled=true
+                binding.webView.settings.domStorageEnabled = true
+                binding.webView.settings.setGeolocationEnabled(true)
+
+                binding.webView.setWebChromeClient(object : WebChromeClient() {
+                    override fun onGeolocationPermissionsShowPrompt(
+                        origin: String,
+                        callback: GeolocationPermissions.Callback
+                    ) {
+                        callback.invoke(origin, true, false)
+                    }
+                })
+
+                binding.webView.visibility=View.VISIBLE
+                binding.showLoc.visibility=View.GONE
+                binding.btnClose.visibility=View.VISIBLE
+                binding.webView.loadUrl("https://www.google.com/maps/search/?api=1&query=$encodedQuery")
+            }
+            binding.btnClose.setOnClickListener {
+                binding.webView.visibility=View.GONE
+                binding.showLoc.visibility=View.VISIBLE
+                binding.btnClose.visibility=View.GONE
+            }
+        }*/
        /* binding.orderDate.isSelected=true
         binding.orderDate.setHorizontallyScrolling(true)
         binding.orderDate.marqueeRepeatLimit=-1
@@ -67,7 +139,10 @@ class MainActivity : AppCompatActivity() {
         binding.description.isSelected=true
         binding.description.setHorizontallyScrolling(true)
         binding.description.marqueeRepeatLimit=-1*/
-        var input=menuItemNam
+
+// Iterating over the ArrayList
+
+            var input=menuItemNam
         val cleanString=input?.removeSurrounding("[","]")
         val items=cleanString?.split(", ")
         var inputQuantity =quantity
@@ -77,20 +152,140 @@ class MainActivity : AppCompatActivity() {
         val itemPrice=cleanPrice?.split(", ")
 //        val ifFloat=itemPrice.toString().toFloatOrNull()
 //        val intValue=ifFloat?.toUInt().toString()
-        if (items != null && itemsQuantity != null) {
-            for (index in items.indices) {
-                val item = items[index]
-                val quantity = itemsQuantity.getOrNull(index) ?: ""
-                val prices = itemPrice?.getOrNull(index) ?: ""
-                arrayList?.add(OrderShow(
-                    description.toString(), item,
-                    prices, quantity, totalPrice.toString()))
+        if (intent.extras?.containsKey("notification") == true) {
+           //binding.showLoc.visibility=View.GONE
+            var sharedPreferences = getSharedPreferences("myorder", 0)
+            var sharedPreferencess = getSharedPreferences("MyPrefs", 0)
+            var userId = sharedPreferencess!!.getString("userId", "")
+            var jwt = sharedPreferencess!!.getString("token", "")
+            var orderid = sharedPreferences.getString("orderId", "")
+            Log.d("sddkjskjd", orderid.toString())
+            getOrders(userId!!, jwt!!)
+
+            acceptButton?.setOnClickListener {
+                handler?.removeCallbacks(runnable!!)
+              val  sharedPreferences=getSharedPreferences("myAllData",0)
+
+                var firstName = sharedPreferences.getString("firstName", "")
+                var lastName = sharedPreferences.getString("lastName", "")
+                var email = sharedPreferences.getString("email", "")
+                var id = sharedPreferences.getString("id", "")
+
+                var description = sharedPreferences.getString("description", "")
+                var orderingMethod = sharedPreferences.getString("orderingMethod", "")
+                var paymentMethod = sharedPreferences.getString("paymentMethod", "")
+                var phone = sharedPreferences.getString("phone", "")
+                var status = sharedPreferences.getString("status", "")
+                var date = sharedPreferences.getString("orderDate", "")
+
+                var menuItemId = sharedPreferences.getString("menuItemId", "")
+                var menuItemNam = sharedPreferences.getString("menuItemName", "")
+                var price = sharedPreferences.getString("price", "")
+                var quantity = sharedPreferences.getString("quantity", "")
+                var totalPrices = sharedPreferences.getString("totalPrice", "")
+                var citys = sharedPreferences.getString("city", "null")
+                var postcodes = sharedPreferences.getString("postcode", "null")
+                var addresss = sharedPreferences.getString("address", "null")
+                Log.d("orderName", city+postcode+address)
+
+//            FirebaseMessageReceiver?.mediaPlayer?.stop()
+//            FirebaseMessageReceiver.notificationManager?.cancelAll()
+                //  printToBluetoothPrinter("Hello, World!")
+                var intent = Intent(this, ConfirmOrderActivity::class.java)
+                intent.putExtra("firstName", firstName.toString())
+                intent.putExtra("lastName", lastName)
+                intent.putExtra("email", email)
+                intent.putExtra("id", id)
+                intent.putExtra("description", description)
+                intent.putExtra("orderingMethod", orderingMethod)
+                intent.putExtra("paymentMethod", paymentMethod)
+                intent.putExtra("phone", phone)
+                intent.putExtra("status", status)
+                intent.putExtra("date", date)
+                intent.putExtra("orderIds", orderIds)
+                intent.putExtra("menuItemId", menuItemId)
+                intent.putExtra("menuItemNam", menuItemNam)
+                intent.putExtra("price", price)
+                intent.putExtra("quantity", quantity)
+                intent.putExtra("totalPrice", totalPrices)
+                startActivity(intent)
+                stopService(Intent(this@MainActivity,BeepForegroundService::class.java))
             }
+            rejectButton?.setOnClickListener {
+                val  sharedPreferences=getSharedPreferences("myAllData",0)
+                var orderIds = sharedPreferences.getString("id", "")
+                Log.d("addtdc", stats.toString())
+                val orderId = orderIds
+                rejectOrder(orderId.toString())
+                onBackPressed()
+                stopService(Intent(this@MainActivity,BeepForegroundService::class.java))
+            }
+        }else{
+            if (items != null && itemsQuantity != null) {
+                for (index in items.indices) {
+                    val item = items[index]
+                    val quantity = itemsQuantity.getOrNull(index) ?: ""
+                    val prices = itemPrice?.getOrNull(index) ?: ""
+                    arrayList?.add(OrderShow(description.toString(), item, prices, quantity, totalPrice.toString()))
+                }
+            }
+
+            binding.recyclerMain.layoutManager=LinearLayoutManager(this)
+            adapter= MainAdapter(arrayList!!,this)
+            binding.recyclerMain.adapter=adapter
+            rejectButton?.setOnClickListener {
+                Log.d("addtdc", stats.toString())
+                var orderIds = intent.getStringExtra("orderIds")
+                val orderId = orderIds
+                rejectOrder(orderId.toString())
+                onBackPressed()
+                stopService(Intent(this@MainActivity,BeepForegroundService::class.java))
+            }
+            acceptButton?.setOnClickListener {
+                handler?.removeCallbacks(runnable!!)
+                var firstName = intent.getStringExtra("firstName")
+                var lastName = intent.getStringExtra("lastName")
+                var email = intent.getStringExtra("email")
+                var id = intent.getStringExtra("id")
+                var description = intent.getStringExtra("description")
+                var orderingMethod = intent.getStringExtra("orderingMethod")
+                var paymentMethod = intent.getStringExtra("paymentMethod")
+                var phone = intent.getStringExtra("phone")
+                var status = intent.getStringExtra("status")
+                var date = intent.getStringExtra("date")
+                var orderIds = intent.getIntExtra("orderIds", 0)
+                var menuItemId = intent.getIntExtra("menuItemId", 0)
+                var menuItemNam = intent.getStringExtra("menuItemNam")
+                var price = intent.getStringExtra("price")
+                var quantity = intent.getStringExtra("quantity")
+                var totalPrices = intent.getStringExtra("totalPrices")
+
+//            FirebaseMessageReceiver?.mediaPlayer?.stop()
+//            FirebaseMessageReceiver.notificationManager?.cancelAll()
+                //  printToBluetoothPrinter("Hello, World!")
+                var intent = Intent(this, ConfirmOrderActivity::class.java)
+                intent.putExtra("firstName", firstName)
+                intent.putExtra("lastName", lastName)
+                intent.putExtra("email", email)
+                intent.putExtra("id", id)
+                intent.putExtra("description", description)
+                intent.putExtra("orderingMethod", orderingMethod)
+                intent.putExtra("paymentMethod", paymentMethod)
+                intent.putExtra("phone", phone)
+                intent.putExtra("status", status)
+                intent.putExtra("date", date)
+                intent.putExtra("orderIds", orderIds)
+                intent.putExtra("menuItemId", menuItemId)
+                intent.putExtra("menuItemNam", menuItemNam)
+                intent.putExtra("price", price)
+                intent.putExtra("quantity", quantity)
+                intent.putExtra("totalPrice", totalPrices)
+                startActivity(intent)
+                stopService(Intent(this@MainActivity,BeepForegroundService::class.java))
+            }
+
         }
 
-        binding.recyclerMain.layoutManager=LinearLayoutManager(this)
-        adapter= MainAdapter(arrayList!!,this)
-        binding.recyclerMain.adapter=adapter
 
         if (status=="accepted"){
             binding.linearMain.visibility = View.GONE
@@ -104,6 +299,8 @@ class MainActivity : AppCompatActivity() {
             binding.recyclerMain.visibility = View.GONE
             binding.cardOrder.visibility = View.VISIBLE
             binding.imgPending.setImageDrawable(resources.getDrawable(R.drawable.rejected))
+        }else if (status=="notification"){
+            binding.imgPending.visibility=View.GONE
         }else{
             binding.btnAccept.visibility = View.VISIBLE
             binding.btnReject.visibility = View.VISIBLE
@@ -113,69 +310,7 @@ class MainActivity : AppCompatActivity() {
           onBackPressed()
         }
         supportActionBar?.hide()
-        acceptButton = findViewById(R.id.btnAccept)
-        rejectButton = findViewById(R.id.btnReject)
-        acceptButton.setOnClickListener {
-            var firstName = intent.getStringExtra("firstName")
-            var lastName = intent.getStringExtra("lastName")
-            var email = intent.getStringExtra("email")
-            var id = intent.getStringExtra("id")
-            var description = intent.getStringExtra("description")
-            var orderingMethod = intent.getStringExtra("orderingMethod")
-            var paymentMethod = intent.getStringExtra("paymentMethod")
-            var phone = intent.getStringExtra("phone")
-            var status = intent.getStringExtra("status")
-            var date = intent.getStringExtra("date")
-            var orderIds = intent.getIntExtra("orderIds", 0)
-            var menuItemId = intent.getIntExtra("menuItemId", 0)
-            var menuItemNam = intent.getStringExtra("menuItemNam")
-            var price = intent.getStringExtra("price")
-            var quantity = intent.getStringExtra("quantity")
-            var totalPrices = intent.getStringExtra("totalPrices")
 
-//            FirebaseMessageReceiver?.mediaPlayer?.stop()
-//            FirebaseMessageReceiver.notificationManager?.cancelAll()
-            //  printToBluetoothPrinter("Hello, World!")
-            var intent = Intent(this, ConfirmOrderActivity::class.java)
-            intent.putExtra("firstName", firstName)
-            intent.putExtra("lastName", lastName)
-            intent.putExtra("email", email)
-            intent.putExtra("id", id)
-            intent.putExtra("description", description)
-            intent.putExtra("orderingMethod", orderingMethod)
-            intent.putExtra("paymentMethod", paymentMethod)
-            intent.putExtra("phone", phone)
-            intent.putExtra("status", status)
-            intent.putExtra("date", date)
-            intent.putExtra("orderIds", orderIds)
-            intent.putExtra("menuItemId", menuItemId)
-            intent.putExtra("menuItemNam", menuItemNam)
-            intent.putExtra("price", price)
-            intent.putExtra("quantity", quantity)
-            intent.putExtra("totalPrice", totalPrices)
-            startActivity(intent)
-            stopService(Intent(this@MainActivity,BeepForegroundService::class.java))
-        }
-
-        rejectButton.setOnClickListener {
-            Log.d("addtdc", stats.toString())
-            var orderIds = intent.getStringExtra("orderIds")
-            val orderId = orderIds
-            rejectOrder(orderId.toString())
-            onBackPressed()
-            stopService(Intent(this@MainActivity,BeepForegroundService::class.java))
-            var dbModel=DbModel()
-            dbModel.title= "Order $id"
-            dbModel.desc= date.toString()
-            dbModel.email=email.toString()
-            dbModel.phone=phone.toString()
-            dbModel.status="rejected"
-            dbModel.item=menuItemNam.toString()
-            dbModel.price=totalPrice.toString()
-            Log.d("dsdsds", title.toString())
-            var dbHistory=RejectedDb(this)
-            dbHistory.saveData(dbModel)
-        }
 
         if (name!=null&&total!=null){
             binding.name.text = name
@@ -184,17 +319,26 @@ class MainActivity : AppCompatActivity() {
             binding.pMethod.visibility=View.GONE
 //            binding.oId.visibility=View.GONE
 //            binding.mItem.visibility=View.GONE
-            binding.pPrice.visibility=View.GONE
-            binding.qQuant.visibility=View.GONE
+//            binding.pPrice.visibility=View.GONE
+//            binding.qQuant.visibility=View.GONE
             binding.phoneV.visibility=View.GONE
 //            binding.idV.visibility=View.GONE
             binding.menuV.visibility=View.GONE
             binding.orderV.visibility=View.GONE
 //            binding.ordersV.visibility=View.GONE
-            binding.privev.visibility=View.GONE
+//            binding.privev.visibility=View.GONE
         }else{
             binding.name.text = "$firstName $lastName"
-            binding.totalPrice.text = "$totalPrice£"
+            val priceClean = totalPrice.toString().removeSurrounding("[", "]")
+            val convert = priceClean.split(", ")
+
+            val totalPrice: String = if (convert.size > 1) {
+                val sum = convert.map { it.toFloatOrNull() ?: 0.0f }.sum()
+                sum.toString()
+            } else {
+                convert.firstOrNull() ?: ""
+            }
+            binding.totalPrice.text = totalPrice
         }
         binding.email.text = email
         if (description.isNullOrEmpty()) {
@@ -215,22 +359,36 @@ class MainActivity : AppCompatActivity() {
 
 //        binding.orderIds.text = orderIds.toString()
 //        binding.menuItemId.text = menuItemId.toString()
-        binding.menuItemNam.text = menuItemNam
-        binding.price.text = "$price£"
-        binding.quantity.text = quantity.toString()
 
+        if (items != null && itemsQuantity != null && itemPrice != null) {
+            // Join the menuItemNam values with newline separator
+            val menuItemText = items.joinToString("\n")
+            val quantityText = itemsQuantity.joinToString("\n")
+            val priceText = itemPrice.joinToString("\n")
+
+            // Set the text of your TextViews
+            binding.menuItemNam.text = menuItemText
+            binding.quantity.text = quantityText
+            binding.price.text = priceText
+        }
     }
 
     override fun onBackPressed() {
         if (status=="accepted"||status=="rejected"){
             onBackPressedDispatcher.onBackPressed()
+            handler?.removeCallbacks(runnable!!)
             finish()
         }else{
         startActivity(Intent(this, OrderStatusActivity::class.java))
-        finish()
+            handler?.removeCallbacks(runnable!!)
+            finish()
     }
     }
-
+    fun buildRecycler(){
+        binding.recyclerMain.layoutManager=LinearLayoutManager(this)
+        var adapter= MainAdapterTwo(courseModelArrayList!!,this)
+        binding.recyclerMain.adapter=adapter
+    }
     private fun rejectOrder(orderId: String) {
         var sharedPreferences=getSharedPreferences("MyPrefs",0)
         var userid=sharedPreferences.getString("userId","")
@@ -248,8 +406,8 @@ class MainActivity : AppCompatActivity() {
     }
 companion object {
     lateinit var binding: ActivityMainBinding
-    private lateinit var acceptButton: Button
-    private lateinit var rejectButton: Button
+    private  var acceptButton: Button?=null
+    private var rejectButton: Button?=null
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var bluetoothSocket: BluetoothSocket? = null
     private var outputStream: OutputStream? = null
@@ -287,4 +445,176 @@ companion object {
         })
     }
 }
+    @SuppressLint("SuspiciousIndentation")
+    fun getOrders(userId: String, token: String) {
+    var  pd = ProgressDialog(this)
+           pd!!.setMessage("Loading!...")
+           pd?.setCanceledOnTouchOutside(false)
+           pd!!.show()
+        val baseUrl = "https://api.freeorder.co.uk/api/Order/getbyuserid/$userId"
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(baseUrl)
+            .header("Authorization", "Bearer $token")
+            .get()
+            .build()
+
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("OrderManxagerss", "Failed to get orders. Error: ${e.message}")
+                // Handle failure, show error to the user, etc.
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string()
+                if (response.isSuccessful) {
+                    try {
+                        val orders = JSONArray(responseData)
+                        // val jsonObject = JSONObject(responseData)
+
+                        if (orders.length()>0) {
+                            val orderObj = orders.getJSONObject(orders.length()-1)
+                            val orderId = orderObj.getInt("id")
+                            val orderDate = orderObj.getString("orderDate")
+                            var status = orderObj.getString("status")
+                            val description = orderObj.getString("description")
+                            val paymentMethod = orderObj.getString("paymentMethod")
+                            val orderingMethod = orderObj.getString("orderingMethod")
+//                            var tokens = jsonObject.getString("token")
+//                            Log.e("OrderMasdnager", tokens)
+                            // Extract customer details
+                            val customerObj = orderObj.getJSONObject("customer")
+                            val firstName = customerObj.getString("first_Name")
+                            val lastName = customerObj.getString("last_Name")
+                            val phone = customerObj.getString("phone")
+                            val email = customerObj.getString("email")
+                            val city = customerObj.getString("city")
+                            val postCode = customerObj.getString("postCode")
+                            var address1 = customerObj.getString("address1")
+
+                            // extract order details
+                            val orderDetailsArray = orderObj.getJSONArray("orderDetails")
+                            val items = ArrayList<OrderShow>() // Create a list to hold the order items
+                            var order:Orderss?=null
+                            if (status=="Order Placed"){
+                                 order = Orderss(
+                                    orderId.toString(),
+                                    orderDate,
+                                    status,
+                                    description,
+                                    paymentMethod,
+                                    orderingMethod,
+                                    firstName,
+                                    lastName,
+                                    phone,
+                                    email,
+                                    items,
+                                    orderDetailsArray.length()
+                                )
+                            }
+                            val menuItemIds = ArrayList<String>()
+                            val menuItemNames = ArrayList<String>()
+                            val prices = ArrayList<String>()
+                            val quantities = ArrayList<String>()
+                            val totalPrices = ArrayList<String>()
+
+                            for (j in 0 until orderDetailsArray.length()) {
+                                val orderDetails = orderDetailsArray.getJSONObject(j)
+                                val menuItemId = orderDetails.getInt("menuItemId")
+                                val menuItemName = orderDetails.getString("menuItemName")
+                                val price = orderDetails.getDouble("price")
+                                val quantity = orderDetails.getInt("quantity")
+                                val totalPrice = orderDetails.getDouble("totalPrice")
+
+
+                                menuItemIds.add(menuItemId.toString())
+                                menuItemNames.add(menuItemName)
+                                prices.add(price.toString())
+                                quantities.add(quantity.toString())
+                                totalPrices.add(totalPrice.toString())
+                                Log.e("OrderManxagerss", menuItemName.toString())
+                                courseModelArrayList?.add(order!!)
+
+                                editor?.putString("id", orderId.toString())
+                                editor?.putString("orderDate", orderDate.toString())
+                                editor?.putString("status", status.toString())
+                                editor?.putString("description", description.toString())
+                                editor?.putString("paymentMethod", paymentMethod.toString())
+                                editor?.putString("orderingMethod", orderingMethod.toString())
+                                editor?.putString("firstName", firstName.toString())
+                                editor?.putString("lastName", lastName.toString())
+                                editor?.putString("phone", phone.toString())
+                                editor?.putString("email", email.toString())
+                                editor?.putString("menuItemId", menuItemId.toString())
+                                editor?.putString("totalPrice", totalPrice.toString())
+                                editor?.putString("city", city)
+                                editor?.putString("postcode",postCode)
+                                editor?.putString("address", address1)
+
+
+                            }
+                            var name=menuItemNames.toString()
+                            var id=menuItemIds.toString()
+                            var pric=prices.toString()
+                            var quan=quantities.toString()
+                            var total=totalPrices.toString()
+                            Log.e("OrderManxageress", name.toString())
+                            editor?.putString("menuItemName", name)
+                            editor?.putString("price", pric)
+                            editor?.putString("quantity", quan)
+                            editor?.apply()
+                            var input=name
+                            val cleanString=input?.removeSurrounding("[","]")
+                            val itemName=cleanString?.split(", ")
+
+                            var inputQuantity =quan
+                            val cleanStringQuantity=inputQuantity?.removeSurrounding("[","]")
+                            val itemsQuantity=cleanStringQuantity?.split(", ")
+
+                            val cleanPrice=pric?.removeSurrounding("[","]")
+                            val itemPrice=cleanPrice?.split(", ")
+
+                            if (itemName != null && itemsQuantity != null) {
+                                for (index in itemName.indices) {
+                                    val item = itemName[index]
+                                    val quantity = itemsQuantity.getOrNull(index) ?: ""
+                                    val prices = itemPrice?.getOrNull(index) ?: ""
+                                    val orderItem = OrderShow(id, item.toString(), prices, quantity, total)
+                                    items.add(orderItem)
+                                }
+                            }
+
+                            runOnUiThread {
+                                val cleanString = totalPrices.toString().removeSurrounding("[", "]")
+                                val convert = cleanString.split(", ")
+                                val totalPrice: String = if (convert.size > 1) {
+                                    val sum = convert.map { it.toFloatOrNull() ?: 0.0f }.sum()
+                                    sum.toString()
+                                } else {
+                                    convert.firstOrNull() ?: ""
+                                }
+                                binding.totalPrices.text= totalPrice
+                            }
+                            Log.e("OrderManxagerss", paymentMethod + orderingMethod + phone)
+                        }
+                        runOnUiThread {
+                           buildRecycler()
+                           pd?.dismiss()
+                            // Update RecyclerView adapter with the orderList
+                            // ...
+                        }
+                    } catch (e: JSONException) {
+                        Log.e("OrderManxagerss", "Error parsing JSON response: ${e.message}")
+                        // Handle parsing error, show error to the user, etc.
+                    }
+                } else {
+
+                    Log.e("OrderManxagerss", "Failed to get orders. Status: ${response.code}")
+                    // Handle API error, show error to the user, etc.
+                }
+            }
+        })
+    }
+
 }

@@ -22,12 +22,9 @@ import androidx.core.content.FileProvider
 import com.example.orderApp.R
 import com.example.orderApp.auth.LoginActivity
 import com.example.orderApp.databinding.ActivitySettingBinding
-import com.example.orderApp.db.DbHistory
-import com.example.orderApp.db.RejectedDb
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mazenrashed.printooth.Printooth
 import com.mazenrashed.printooth.data.converter.ArabicConverter
-import com.mazenrashed.printooth.data.printable.ImagePrintable
 import com.mazenrashed.printooth.data.printable.Printable
 import com.mazenrashed.printooth.data.printable.RawPrintable
 import com.mazenrashed.printooth.data.printable.TextPrintable
@@ -64,25 +61,19 @@ class SettingActivity : AppCompatActivity() {
                 .setTitle("Are you sure?")
                 .setMessage("Logout your current account!")
                 .setPositiveButton("ok",DialogInterface.OnClickListener { dialogInterface, i ->
-                    var db1=DbHistory(this)
-                    var db2=RejectedDb(this)
-                    db1.deleteData(this)
-                    Handler().postDelayed(Runnable {
-                        db2.deleteData(this)
-                    },100)
                     if (Printooth.hasPairedPrinter())
                         Printooth.removeCurrentPrinter()
 
                     sharedPreferences.edit().remove("isLoggedIn").commit()
                     sharedPreferences.edit().remove("fcmToken").apply()
 
-                            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener { task ->
+                          /*  FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Log.d("deleted", "successfully")
                                 } else {
                                     Log.d("deleted","un successfully")
                                 }
-                            }
+                            }*/
 
                     startActivity(Intent(this,LoginActivity::class.java))
                     finish()
