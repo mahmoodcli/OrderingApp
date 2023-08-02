@@ -41,7 +41,7 @@ License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 Support
-For any questions or issues, feel free to contact us at your_email@example.com
+For any questions or issues, feel free to contact us at shahzadmehmood1246@gmail.com
 
 Acknowledgments
 We would like to express our gratitude to the open-source community for the tools and libraries that made this project possible.
