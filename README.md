@@ -1,5 +1,3 @@
-![IMG-20230802-WA0007](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/14fb72b7-86b4-4c94-9b39-ba812cc9be1d)![IMG-20230802-WA0006](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/c47eeabd-07bc-4933-b07a-e164bdf6fc04)![IMG-20230802-WA0005](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/dc5b818b-2522-457d-9d02-36bfa467362f)![IMG-20230802-WA0004](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/5343e676-b7fc-4297-9a6b-ae4584e97576)![IMG-20230802-WA0003](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/29c13b3f-5b45-4e92-a2a6-523aeb5158ad)![IMG-20230802-WA0002](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/4ce847b2-6163-4694-9497-e41a4c023db7)# OrderingApp
-full project!
 Food Ordering App project on Git. It helps potential collaborators and users understand your project, its purpose, how to use it, and how they can contribute. Below is a template for your README file:
 
 Food Ordering App for Admin
@@ -19,13 +17,11 @@ User Management: Admins can manage user accounts, add new staff, and control acc
 Screenshots
 
 
-![IMG-20230802-WA0002](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/d9a5532f-0ac3-49bb-be40-9addd131f4ea)
 
 
 Getting Started
 Follow these instructions to set up the Food Ordering App for Admin on your local development environment:
 
-Clone the repository: git clone https://github.com/your_username/food-ordering-app.git
 Install dependencies: cd food-ordering-app and npm install
 Configure the Backend: Refer to the backend/README.md for setting up the backend server.
 Run the App: npm start to launch the development server and access the app at http://localhost:3000
