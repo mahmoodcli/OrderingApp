@@ -17,6 +17,12 @@ User Management: Admins can manage user accounts, add new staff, and control acc
 Screenshots
 
 
+![IMG-20230802-WA0002](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/2ee0cc4e-9417-4912-ba8a-7edb07fbf8a0)
+![IMG-20230802-WA0007](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/ee3e13b1-7e94-496c-8559-47ededd6e282)
+![IMG-20230802-WA0006](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/e286517d-ca7e-48fb-964c-efb870bc49c6)
+![IMG-20230802-WA0005](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/912acc0b-4550-4e3d-9675-0e22bb459587)
+![IMG-20230802-WA0004](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/63a446d8-e1c2-41c4-bc35-761f5b1b478a)
+![IMG-20230802-WA0003](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/4517a2b4-b753-4431-b3c0-8f8889d95349)
 
 
 Getting Started
@@ -24,7 +30,7 @@ Follow these instructions to set up the Food Ordering App for Admin on your loca
 
 Install dependencies: cd food-ordering-app and npm install
 Configure the Backend: Refer to the backend/README.md for setting up the backend server.
-Run the App: npm start to launch the development server and access the app at http://localhost:3000
+Run the App: npm start to launch the development server and access the app at http://localhost:3000](https://portal.freeorder.co.uk/Home/Index)
 Contributing
 We welcome contributions to improve the Food Ordering App for Admin. To contribute, follow these steps:
 
