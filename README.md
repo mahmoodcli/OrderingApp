@@ -16,7 +16,8 @@ Notification System: Receive instant notifications for new orders and updates, e
 Order Fulfillment: Keep track of the status of each order, from pending to completed, to ensure efficient order processing.
 Bluetooth Printer Integration: Seamlessly connect to a Bluetooth printer to generate and print order receipts on-the-go.
 User Management: Admins can manage user accounts, add new staff, and control access rights.
-Screenshots
+
+<h1>Screenshots</h1>
 
 ![IMG-20230802-WA0006](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/ea56d122-f3f2-4696-a0be-4a1b83a42711)
 ![IMG-20230802-WA0003](https://github.com/ShahzadMehmood/OrderingApp/assets/74652787/f0b9e14b-f8bd-493c-95de-31705a8d464d)
