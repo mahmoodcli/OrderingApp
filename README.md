@@ -3,7 +3,7 @@ Food Ordering App project on Git. It helps potential collaborators and users und
 Food Ordering App for Admin
 License
 
-**<h1>Food Ordering App Logo</h1>**
+**<h1>Ordering App</h1>**
 
 https://opensource.org/licenses/MIT
 
