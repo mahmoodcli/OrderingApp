@@ -3,7 +3,7 @@ Food Ordering App project on Git. It helps potential collaborators and users und
 Food Ordering App for Admin
 License
 
-**<h1>Food Ordering App Logo<h1>**
+**<h1>Food Ordering App Logo</h1>**
 
 Overview
 The Food Ordering App for Admin is a powerful application designed to empower restaurant administrators to efficiently manage incoming orders, handle pending orders, and streamline the order fulfillment process. The app also includes Bluetooth printer functionality to provide instant order receipts.
