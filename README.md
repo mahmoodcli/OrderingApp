@@ -28,7 +28,7 @@ Follow these instructions to set up the Food Ordering App for Admin on your loca
 
 Install dependencies: cd food-ordering-app and npm install
 Configure the Backend: Refer to the backend/README.md for setting up the backend server.
-Run the App: npm start to launch the development server and access the app at http://localhost:3000](https://portal.freeorder.co.uk/Home/Index)
+Run the App: npm start to launch the development server and access the app at (https://portal.freeorder.co.uk/Home/Index)
 Contributing
 We welcome contributions to improve the Food Ordering App for Admin. To contribute, follow these steps:
 
