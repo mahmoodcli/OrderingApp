@@ -121,9 +121,11 @@ class ConfirmOrderActivity : AppCompatActivity() {
             sharedPreferences.edit().putString("orders","$firstName $lastName").apply()
 
             val map = convertScrollViewToBitmap(binding.scrollView)
+
             val stream = ByteArrayOutputStream()
-            map?.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+            map?.compress(Bitmap.CompressFormat.PNG,  100, stream)
             val byteArray: ByteArray = stream.toByteArray()
+
             val in1 = Intent(this, AcceptOrderActivity::class.java)
             in1.putExtra("image", byteArray)
             startActivity(in1)
@@ -163,7 +165,7 @@ class ConfirmOrderActivity : AppCompatActivity() {
             var sharedPreferences=getSharedPreferences("MyPrefs",0)
             var userid=sharedPreferences.getString("userId","")
             var jwt=sharedPreferences.getString("token","")
-            MainActivity.updateOrderStatus(orderId, userid!!, "accepted", jwt!!)
+            MainActivity.updateOrderStatus(orderId, userid!!, "Accepted", jwt!!)
             Log.d("addtdc", MainActivity.stats.toString())
     }
     fun companyDetail(userId:String,jwt:String){

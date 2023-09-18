@@ -5,19 +5,27 @@ import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.webkit.*
 import android.widget.Button
+import android.widget.ScrollView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.orderApp.R
 import com.example.orderApp.adapter.MainAdapter
@@ -25,10 +33,23 @@ import com.example.orderApp.adapter.MainAdapterTwo
 import com.example.orderApp.databinding.ActivityMainBinding
 import com.example.orderApp.model.*
 import com.example.orderApp.services.BeepForegroundService
+import com.mazenrashed.printooth.Printooth
+import com.mazenrashed.printooth.data.converter.ArabicConverter
+import com.mazenrashed.printooth.data.printable.ImagePrintable
+import com.mazenrashed.printooth.data.printable.Printable
+import com.mazenrashed.printooth.data.printable.RawPrintable
+import com.mazenrashed.printooth.data.printable.TextPrintable
+import com.mazenrashed.printooth.data.printer.DefaultPrinter
+import com.mazenrashed.printooth.ui.ScanningActivity
+import com.mazenrashed.printooth.utilities.Printing
+import com.mazenrashed.printooth.utilities.PrintingCallback
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.json.JSONArray
 import org.json.JSONException
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.net.URLEncoder
@@ -38,18 +59,27 @@ class MainActivity : AppCompatActivity() {
     var status:String?=null
     var arrayList:ArrayList<OrderShow>?=null
     var adapter:MainAdapter?=null
+    private var printing : Printing? = null
     private var courseModelArrayList: ArrayList<Orderss>? = null
     var sharedPreferences:SharedPreferences?=null
     var editor:Editor?=null
     var handler:Handler?=null
+    var pd:ProgressDialog?=null
     var runnable:Runnable?=null
     @SuppressLint("StringFormatInvalid", "SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Printooth.init(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         sharedPreferences=getSharedPreferences("myAllData",0)
         var firstNamse = sharedPreferences?.getString("firstName", "")
         Log.d("orderName", firstNamse.toString())
+        pd= ProgressDialog(this)
+        if (Printooth.hasPairedPrinter())
+            printing = Printooth.printer()
+        initViews()
+        initListeners()
         editor=sharedPreferences?.edit()
         handler= Handler()
         runnable= Runnable {
@@ -62,7 +92,6 @@ class MainActivity : AppCompatActivity() {
         }
         handler?.postDelayed(runnable!!,3 * 60 * 1000)
 
-        setContentView(binding.root)
         arrayList= ArrayList()
         courseModelArrayList=ArrayList()
         acceptButton = findViewById(R.id.btnAccept)
@@ -292,18 +321,26 @@ class MainActivity : AppCompatActivity() {
             binding.imgPendings.visibility = View.GONE
             binding.recyclerMain.visibility = View.GONE
             binding.cardOrder.visibility = View.VISIBLE
+            binding.printStatus.visibility=View.VISIBLE
             binding.imgPending.setImageDrawable(resources.getDrawable(R.drawable.accepted))
+
         }else if (status=="rejected"){
             binding.linearMain.visibility = View.GONE
             binding.imgPendings.visibility = View.GONE
             binding.recyclerMain.visibility = View.GONE
             binding.cardOrder.visibility = View.VISIBLE
+            binding.printStatus.visibility=View.VISIBLE
             binding.imgPending.setImageDrawable(resources.getDrawable(R.drawable.rejected))
         }else if (status=="notification"){
             binding.imgPending.visibility=View.GONE
         }else{
             binding.btnAccept.visibility = View.VISIBLE
             binding.btnReject.visibility = View.VISIBLE
+        }
+
+        binding.shareOrder.setOnClickListener {
+            val map = convertScrollViewToBitmap(binding.scrollMain)
+            shareBitmap(this,map,"order")
         }
 
         binding.toolMain.setNavigationOnClickListener {
@@ -372,7 +409,187 @@ class MainActivity : AppCompatActivity() {
             binding.price.text = priceText
         }
     }
+    fun shareBitmap(context: Context, bitmap: Bitmap, title: String) {
+        try {
+            val cachePath = File(context.cacheDir, "images")
+            cachePath.mkdirs()
+            val file = File(cachePath, "image.png")
 
+            val fileOutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+            fileOutputStream.flush()
+            fileOutputStream.close()
+
+            val fileUri = FileProvider.getUriForFile(
+                context,
+                context.applicationContext.packageName + ".provider",
+                file
+            )
+
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "image/png"
+            shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+            context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    fun convertScrollViewToBitmap(scrollView: ScrollView): Bitmap {
+        var totalHeight = 0
+
+
+        for (i in 0 until scrollView.childCount) {
+            totalHeight += scrollView.getChildAt(i).height
+        }
+
+        scrollView.measure(
+            View.MeasureSpec.makeMeasureSpec(scrollView.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(totalHeight, View.MeasureSpec.EXACTLY)
+        )
+        scrollView.layout(0, 0, scrollView.measuredWidth, scrollView.measuredHeight)
+        val bitmap = Bitmap.createBitmap(
+            scrollView.measuredWidth,
+            scrollView.measuredHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.WHITE) // Set white background color
+        scrollView.draw(canvas)
+        return bitmap
+    }
+    private fun initViews() {
+        var text = if (Printooth.hasPairedPrinter()) "Un-pair ${Printooth.getPairedPrinter()?.name}" else "Pair with printer"
+        //  Toast.makeText(this@AcceptOrderActivity, text, Toast.LENGTH_SHORT).show()
+    }
+    private fun printSomePrintable() {
+        val printables = getSomePrintables()
+        printing?.print(printables)
+    }
+    private fun getSomePrintables() = ArrayList<Printable>().apply {
+        add(RawPrintable.Builder(byteArrayOf(27, 100, 4)).build()) // feed lines example in raw mode
+
+        add(
+            TextPrintable.Builder()
+            .setText(" Hello World : été è à '€' içi Bò Xào Coi Xanh")
+            .setCharacterCode(DefaultPrinter.CHARCODE_PC1252)
+            .setNewLinesAfter(1)
+            .build())
+
+        add(
+            TextPrintable.Builder()
+            .setText("Hello World : été è à €")
+            .setCharacterCode(DefaultPrinter.CHARCODE_PC1252)
+            .setNewLinesAfter(1)
+            .build())
+
+        add(
+            TextPrintable.Builder()
+            .setText("Hello World")
+            .setLineSpacing(DefaultPrinter.LINE_SPACING_60)
+            .setAlignment(DefaultPrinter.ALIGNMENT_CENTER)
+            .setEmphasizedMode(DefaultPrinter.EMPHASIZED_MODE_BOLD)
+            .setUnderlined(DefaultPrinter.UNDERLINED_MODE_ON)
+            .setNewLinesAfter(1)
+            .build())
+
+        add(
+            TextPrintable.Builder()
+            .setText("Hello World")
+            .setAlignment(DefaultPrinter.ALIGNMENT_RIGHT)
+            .setEmphasizedMode(DefaultPrinter.EMPHASIZED_MODE_BOLD)
+            .setUnderlined(DefaultPrinter.UNDERLINED_MODE_ON)
+            .setNewLinesAfter(1)
+            .build())
+
+        add(
+            TextPrintable.Builder()
+            .setText("اختبار العربية")
+            .setAlignment(DefaultPrinter.ALIGNMENT_CENTER)
+            .setEmphasizedMode(DefaultPrinter.EMPHASIZED_MODE_BOLD)
+            .setFontSize(DefaultPrinter.FONT_SIZE_NORMAL)
+            .setUnderlined(DefaultPrinter.UNDERLINED_MODE_ON)
+            .setCharacterCode(DefaultPrinter.CHARCODE_ARABIC_FARISI)
+            .setNewLinesAfter(1)
+            .setCustomConverter(ArabicConverter()) // change only the converter for this one.
+            .build())
+    }
+
+    private fun initListeners() {
+        /* binding.printOrder.setOnClickListener {
+             if (!Printooth.hasPairedPrinter()) startActivityForResult(Intent(this,
+                 ScanningActivity::class.java),
+                 ScanningActivity.SCANNING_FOR_PRINTER)
+             else printSomePrintable()
+         }*/
+        binding.printOrder.setOnClickListener {
+            val map = convertScrollViewToBitmap(binding.scrollMain)
+            if (!Printooth.hasPairedPrinter())
+                startActivityForResult(Intent(this, ScanningActivity::class.java), ScanningActivity.SCANNING_FOR_PRINTER)
+            else printSomePrintable()
+        }
+
+        /*  btnPiarUnpair.setOnClickListener {
+              if (Printooth.hasPairedPrinter()) Printooth.removeCurrentPrinter()
+              else startActivityForResult(Intent(this, ScanningActivity::class.java),
+                  ScanningActivity.SCANNING_FOR_PRINTER)
+              initViews()
+          }
+
+          btnCustomPrinter.setOnClickListener {
+              startActivity(Intent(this, WoosimActivity::class.java))
+          }*/
+
+        printing?.printingCallback = object : PrintingCallback {
+            override fun connectingWithPrinter() {
+                pd?.setMessage("Printing...")
+                pd?.setCanceledOnTouchOutside(false)
+                pd?.show()
+//                Toast.makeText(this@AcceptOrderActivity, "Connecting with printer", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun printingOrderSentSuccessfully() {
+                pd?.dismiss()
+                Toast.makeText(this@MainActivity, "Order sent to printer", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun connectionFailed(error: String) {
+                pd?.dismiss()
+                Toast.makeText(this@MainActivity, "Failed to connect with printer", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(error: String) {
+                pd?.dismiss()
+                Toast.makeText(this@MainActivity, error, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onMessage(message: String) {
+                pd?.dismiss()
+                Toast.makeText(this@MainActivity, "Message: $message", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun disconnected() {
+                pd?.dismiss()
+                //        Toast.makeText(this@AcceptOrderActivity, "Disconnected Printer", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    private fun printSomeImages(bitmap: Bitmap) {
+        val receiptWidthInPixels = (80f * 203 / 25.4f).toInt() // Calculate the receipt width in pixels based on 80mm width and 203 DPI
+        val centeredBitmap = centerImageHorizontally(bitmap, receiptWidthInPixels)
+        val printables = ArrayList<Printable>().apply {
+            add(ImagePrintable.Builder(centeredBitmap).build())
+        }
+        printing?.print(printables)
+    }
+    private fun centerImageHorizontally(bitmap: Bitmap, receiptWidth: Int): Bitmap {
+        val imageWidth = bitmap.width
+        val padding = (receiptWidth - imageWidth) / 2
+        val centeredBitmap = Bitmap.createBitmap(receiptWidth, bitmap.height, bitmap.config)
+        val canvas = Canvas(centeredBitmap)
+        canvas.drawColor(Color.WHITE) // Set the background color of the receipt
+        canvas.drawBitmap(bitmap, padding.toFloat(), 0f, null)
+        return centeredBitmap
+    }
     override fun onBackPressed() {
         if (status=="accepted"||status=="rejected"){
             onBackPressedDispatcher.onBackPressed()
@@ -393,7 +610,7 @@ class MainActivity : AppCompatActivity() {
         var sharedPreferences=getSharedPreferences("MyPrefs",0)
         var userid=sharedPreferences.getString("userId","")
         var jwt=sharedPreferences.getString("token","")
-        updateOrderStatus(orderId, userid!!, "rejected", jwt!!)
+        updateOrderStatus(orderId, userid!!, "Rejected", jwt!!)
     }
     inner class WebAppInterface {
         @JavascriptInterface

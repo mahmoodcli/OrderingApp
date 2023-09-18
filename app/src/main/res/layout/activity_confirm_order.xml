@@ -530,7 +530,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </ScrollView>
-
     <ImageView
         android:id="@+id/accept_confirm"
         android:layout_width="wrap_content"

@@ -104,10 +104,9 @@ class AcceptOrderActivity : AppCompatActivity() {
         binding.printOrder.setOnClickListener {
             val byteArray = intent.getByteArrayExtra("image")
             val bmp: Bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray!!.size)
-            if (!Printooth.hasPairedPrinter()) startActivityForResult(Intent(this,
-                ScanningActivity::class.java),
-                ScanningActivity.SCANNING_FOR_PRINTER)
-            else printSomeImages(bmp)
+            if (!Printooth.hasPairedPrinter())
+                startActivityForResult(Intent(this, ScanningActivity::class.java), ScanningActivity.SCANNING_FOR_PRINTER)
+            else printSomePrintable()
         }
 
       /*  btnPiarUnpair.setOnClickListener {
@@ -178,6 +177,7 @@ class AcceptOrderActivity : AppCompatActivity() {
         }
         printing?.print(printables)
     }
+
 
 
 
